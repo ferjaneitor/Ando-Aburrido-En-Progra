@@ -35,3 +35,17 @@ def rockPaperScrisors(PlayerMove):
         return "Perdiste, La computadora jugo: " + ComputerMove + " y tu jugaste: " + PlayerMove
 
 print(rockPaperScrisors(PlayerMove))
+
+import random
+opciones=["piedra","papel","tijera"]
+eleccion_computadora=random.choice(opciones)
+eleccion_usuario=input("Elige piedra, papel o tijera ").lower()
+print(f"La computadora eligió: {eleccion_computadora}")
+if eleccion_usuario==eleccion_computadora:
+    print("Empate")
+elif (eleccion_usuario=="piedra" and eleccion_computadora=="tijera") or \
+      (eleccion_usuario=="papel" and eleccion_computadora=="piedra") or \
+      (eleccion_usuario=="tijera" and eleccion_computadora=="papel"):
+    print("Ganaste")
+else:
+    print("Perdiste")
