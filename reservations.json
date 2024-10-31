@@ -1,1 +1,16 @@
-[]
+[
+    {
+        "name": "Cumplea\u00f1os",
+        "date": "2025-12-20",
+        "time": "18:20",
+        "length_hours": 6,
+        "length_minutes": 40
+    },
+    {
+        "name": "Cumplea\u00f1os de keyla",
+        "date": "2026-01-18",
+        "time": "16:30",
+        "length_hours": 4,
+        "length_minutes": 20
+    }
+]

@@ -5,25 +5,19 @@ class Reservation:
     def __init__(self, name: str, date: str, time: str, length: str):
         """
         Inicializa una nueva reservación.
-
+        
         :param name: Nombre de la persona que realiza la reservación.
         :param date: Fecha de la reservación en formato YYYY-MM-DD.
         :param time: Hora de la reservación en formato HH:MM.
         :param length: Duración de la reservación en horas (como string).
         """
-        self._name = name  # Usa una variable privada para el nombre
+        self.name = name
         self.date = date
         self.time = time
         self.length = length
 
     def validate_date(self, date: str) -> str:
-        """
-        Valida el formato de la fecha.
-
-        :param date: Fecha a validar.
-        :return: Fecha válida en formato YYYY-MM-DD.
-        :raises ValueError: Si el formato es inválido.
-        """
+        """Valida el formato de la fecha."""
         try:
             datetime.strptime(date, "%Y-%m-%d")
             return date
@@ -31,33 +25,19 @@ class Reservation:
             raise ValueError("Fecha inválida. Debe estar en formato YYYY-MM-DD.")
     
     def validate_time(self, time: str) -> str:
-        """
-        Valida el formato de la hora.
-
-        :param time: Hora a validar.
-        :return: Hora válida en formato HH:MM.
-        :raises ValueError: Si el formato es inválido.
-        """
+        """Valida el formato de la hora."""
         if re.match(r'^\d{2}:\d{2}$', time):
             return time
         else:
             raise ValueError("Hora inválida. Debe estar en formato HH:MM.")
 
-    def validate_length(self, length: str) -> int:
-        """
-        Valida y convierte la duración a un entero.
-
-        :param length: Duración a validar como string.
-        :return: Duración válida como entero.
-        :raises ValueError: Si el valor no es un entero positivo.
-        """
+    def validate_length(self, length: str) -> float:
         try:
-            length_int = int(length)
-            if length_int <= 0:
-                raise ValueError("La duración debe ser un número entero positivo.")
-            return length_int
+            hours, minutes = map(int, length.split(':'))
+            return hours + minutes / 60.0  # Convertir a horas
         except ValueError:
-            raise ValueError("La duración debe ser un número entero.")
+            raise ValueError("La duración debe estar en el formato 'horas:minutos'.")
+
 
     @property
     def date(self) -> str:
@@ -80,44 +60,44 @@ class Reservation:
         self._time = self.validate_time(value)
 
     @property
-    def length(self) -> int:
-        """Obtiene la duración de la reservación."""
-        return self._length
-
+    def length(self) -> str:
+        """Obtiene la duración de la reservación en formato 'X horas Y minutos'."""
+        return f"{self.length_hours} horas {self.length_minutes} minutos"
+    
     @length.setter
     def length(self, value: str):
-        """Establece la duración de la reservación después de validarla."""
-        self._length = self.validate_length(value)
+        """Establece la duración de la reservación a partir de horas y minutos dados."""
+        parts = value.split(':')
+        if len(parts) != 2:
+            raise ValueError("La duración debe estar en el formato 'X:Y'.")
+        try:
+            self.length_hours = int(parts[0])
+            self.length_minutes = int(parts[1])
+        except ValueError:
+            raise ValueError("La duración debe ser un número entero.")
 
     @property
     def name(self) -> str:
         """Obtiene el nombre de la reservación."""
-        return self._name  # Retorna la variable privada
+        return self._name
 
     @name.setter
     def name(self, value: str):
         """Establece un nuevo nombre para la reservación."""
-        self._name = value  # Establece la variable privada
+        self._name = value
 
-    def end_time(self) -> str:
-        """
-        Calcula la hora de finalización de la reservación.
-
-        :return: Hora de finalización en formato HH:MM.
-        """
-        start = datetime.strptime(f"{self.date} {self.time}", "%Y-%m-%d %H:%M")
-        end = start + timedelta(hours=self.length)
-        return end.strftime("%H:%M")
-
-    def to_dict(self):
-        """
-        Convierte la reservación a un diccionario.
-
-        :return: Diccionario con los detalles de la reservación.
-        """
+    def end_time(self):
+        """Calcula la hora de finalización de la reserva."""
+        start_datetime = datetime.strptime(f"{self.date} {self.time}", "%Y-%m-%d %H:%M")
+        end_datetime = start_datetime + timedelta(hours=self.length_hours, minutes=self.length_minutes)
+        return end_datetime.strftime('%H:%M')
+    
+    def to_dict(self) -> dict:
+        """Convierte la reserva a un diccionario para almacenamiento."""
         return {
-            "name": self.name,
-            "date": self.date,
-            "time": self.time,
-            "length": self.length
+            'name': self.name,
+            'date': self.date,
+            'time': self.time,
+            'length_hours': self.length_hours,
+            'length_minutes': self.length_minutes,
         }
