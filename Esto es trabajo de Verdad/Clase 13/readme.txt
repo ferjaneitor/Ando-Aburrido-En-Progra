@@ -1,5 +1,10 @@
 Este es un codigo creado en colaboracion de Keyla Aisha Cox Parales y Fernando Joel Cruz Briones
 
+Para que funcione en su totalidad se tendra que instalar lo siguiente:
+
+pip install tkcalendar
+
+
 Explicaciones echas con ChatGPT con el objetivo de crear documentacion mas que no codigo
 
 ---------------------------------------------------------------------------------------------------------------------------------------------

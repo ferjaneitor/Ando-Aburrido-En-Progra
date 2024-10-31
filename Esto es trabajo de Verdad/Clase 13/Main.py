@@ -1,3 +1,4 @@
+from tkcalendar import Calendar
 import tkinter as tk
 from tkinter import messagebox, simpledialog
 from tkinter import ttk
@@ -5,160 +6,202 @@ from typing import List
 from Classes.Manager import Manager
 from Classes.Reservation import Reservation
 
+#Funtions
 
-class ReservationApp:
-    def __init__(self, master):
-        self.master = master
-        self.manager = Manager()
-        self.selected_reservation = None
-        
-        master.title("Gestión de Reservaciones")
-        master.geometry("800x500")
+#Calendar
+def mostrar_fecha_seleccionada(event):
+    fecha = cal.get_date()
 
-        # Estilo
-        style = ttk.Style()
-        style.configure('TButton', font=('Arial', 10), padding=5)
-        style.configure('TListbox', font=('Arial', 10), padding=5)
+def submit_reservation():
+    try:
+        year = int(year_SpinBox.get())
+        month = int(month_SpinBox.get())
+        day = int(day_SpinBox.get())
+        hour = int(hours_SpinBox1.get())
+        minute = int(min_SpinBox1.get())
+        # Add validation logic here
+        print(f"Reservation for {year}/{month}/{day} at {hour}:{minute} created!")
+    except ValueError:
+        print("Please enter valid data.")
 
-        # Menú principal
-        self.menu_frame = ttk.Frame(master)
-        self.menu_frame.pack(pady=10)
+#Manager
+Manager : object = Manager()
 
-        self.add_button = ttk.Button(self.menu_frame, text="Agregar Reservación", command=self.add_reservation)
-        self.add_button.grid(row=0, column=0, padx=5)
+#Generamos nuestra GUI
+root = tk.Tk()
+root.geometry('1600x800')
+root.title('Reservoir Manager')
+root.minsize(800, 400)
+root.maxsize(1600, 800)
 
-        self.remove_button = ttk.Button(self.menu_frame, text="Eliminar Reservación", command=self.remove_reservation)
-        self.remove_button.grid(row=0, column=1, padx=5)
+# En caso de emergencia escape para salir
+root.bind('<Escape>', lambda event: window.quit())
 
-        self.update_button = ttk.Button(self.menu_frame, text="Actualizar Reservación", command=self.update_reservation)
-        self.update_button.grid(row=0, column=2, padx=5)
+#root.overrideredirect(True)
 
-        self.check_button = ttk.Button(self.menu_frame, text="Verificar Disponibilidad", command=self.check_availability)
-        self.check_button.grid(row=0, column=3, padx=5)
+window = tk.Frame(root)
+window.pack(fill=tk.BOTH, expand=True)
 
-        self.show_button = ttk.Button(self.menu_frame, text="Mostrar Reservaciones", command=self.update_reservation_list)
-        self.show_button.grid(row=0, column=4, padx=5)
+#Grid Config
+window.columnconfigure(0, weight=1)
+window.columnconfigure(1, weight=2)
+window.rowconfigure(0, weight=1)
 
-        # Lista de reservaciones
-        self.reservation_listbox = tk.Listbox(master, width=80, height=15)
-        self.reservation_listbox.pack(pady=20)
-        self.reservation_listbox.bind('<<ListboxSelect>>', self.on_reservation_select)
+# # Create a size grip to allow resizing
+# grip_nw = ttk.Sizegrip(window)
+# grip_nw.place(relx=0.0, rely=0.0, anchor='nw')
 
-        # Cuadro de entrada para los detalles de la reservación
-        self.detail_frame = ttk.LabelFrame(master, text="Detalles de la Reservación")
-        self.detail_frame.pack(pady=10, padx=10, fill="both", expand="yes")
+# grip_ne = ttk.Sizegrip(window)
+# grip_ne.place(relx=1.0, rely=0.0, anchor='ne')
 
-        ttk.Label(self.detail_frame, text="Nombre:").grid(row=0, column=0, padx=5, pady=5)
-        self.name_entry = ttk.Entry(self.detail_frame)
-        self.name_entry.grid(row=0, column=1, padx=5, pady=5)
+# grip_sw = ttk.Sizegrip(window)
+# grip_sw.place(relx=0.0, rely=1.0, anchor='sw')
 
-        ttk.Label(self.detail_frame, text="Fecha (YYYY-MM-DD):").grid(row=1, column=0, padx=5, pady=5)
-        self.date_entry = ttk.Entry(self.detail_frame)
-        self.date_entry.grid(row=1, column=1, padx=5, pady=5)
+# grip_se = ttk.Sizegrip(window)
+# grip_se.place(relx=1.0, rely=1.0, anchor='se')
 
-        ttk.Label(self.detail_frame, text="Hora (HH:MM):").grid(row=2, column=0, padx=5, pady=5)
-        self.time_entry = ttk.Entry(self.detail_frame)
-        self.time_entry.grid(row=2, column=1, padx=5, pady=5)
+#Left Side
+left_side_Frame = ttk.Frame(window)
+left_side_Frame.grid(row=0, column=0, sticky='nsew')
 
-        ttk.Label(self.detail_frame, text="Duración (horas):").grid(row=3, column=0, padx=5, pady=5)
-        self.length_entry = ttk.Entry(self.detail_frame)
-        self.length_entry.grid(row=3, column=1, padx=5, pady=5)
+left_side_Frame.rowconfigure(0, weight=1)
+left_side_Frame.rowconfigure(1, weight=1)
+left_side_Frame.columnconfigure(0, weight=1)
 
-    def update_reservation_list(self):
-        """Actualiza la lista de reservaciones en la interfaz."""
-        self.reservation_listbox.delete(0, tk.END)
-        for reservation in self.manager.reservations:
-            self.reservation_listbox.insert(tk.END, str(reservation))
+#Calendar
+cal : Calendar = Calendar(left_side_Frame, year=2024, month=10, day=29)
+cal.grid( row = 0, column = 0, sticky='nsew', padx = 30, pady = 30)
 
-    def add_reservation(self):
-        """Agrega una nueva reservación usando los datos del cuadro de entrada."""
-        name = self.name_entry.get()
-        date = self.date_entry.get()
-        time = self.time_entry.get()
-        length = self.length_entry.get()
+# Logica
+cal.bind("<<CalendarSelected>>", mostrar_fecha_seleccionada)
+    
+# Main Frame Configuration
+Reservation_input_Frame = ttk.Frame(left_side_Frame, borderwidth=20, relief='groove')
+Reservation_input_Frame.grid(row=1, column=0)
 
-        if name and date and time and length:
-            try:
-                new_reservation = Reservation(name, date, time, length)
-                if self.manager.verify_availability(name):
-                    self.manager.add_reservation(new_reservation)
-                    self.update_reservation_list()
-                    self.clear_entries()
-                else:
-                    messagebox.showwarning("Error", "La reservación ya existe.")
-            except ValueError as e:
-                messagebox.showerror("Error", str(e))
-        else:
-            messagebox.showwarning("Advertencia", "Complete todos los campos.")
+# Configure rows and columns for uniformity
+for i in range(6):
+    Reservation_input_Frame.rowconfigure(i, weight=1)
+Reservation_input_Frame.columnconfigure(0, weight=1)
 
-    def remove_reservation(self):
-        """Elimina la reservación seleccionada."""
-        if self.selected_reservation:
-            self.manager.remove_reservation(self.selected_reservation.name)
-            self.selected_reservation = None
-            self.update_reservation_list()
-            self.clear_entries()
-        else:
-            messagebox.showwarning("Advertencia", "Seleccione una reservación para eliminar.")
+# Nested Frame for Date Selector
+date_Frame = ttk.Frame(Reservation_input_Frame)
+date_Frame.grid(row=0, column=0, sticky='ew', pady=5)
 
-    def update_reservation(self):
-        """Actualiza la reservación seleccionada usando los datos del cuadro de entrada."""
-        if self.selected_reservation:
-            name = self.name_entry.get()
-            date = self.date_entry.get()
-            time = self.time_entry.get()
-            length = self.length_entry.get()
+date_Label = ttk.Label(date_Frame, text='Date (YYYY/MM/DD)')
+date_Label.grid(row=0, column=0, sticky='nswe')
 
-            if name and date and time and length:
-                try:
-                    updated_reservation = Reservation(name, date, time, length)
-                    self.manager.update_reservation(self.selected_reservation.name, updated_reservation)
-                    self.selected_reservation = updated_reservation
-                    self.update_reservation_list()
-                    self.clear_entries()
-                except ValueError as e:
-                    messagebox.showerror("Error", str(e))
-            else:
-                messagebox.showwarning("Advertencia", "Complete todos los campos.")
-        else:
-            messagebox.showwarning("Advertencia", "Seleccione una reservación para actualizar.")
+# Year SpinBox
+year_SpinBox = ttk.Spinbox(date_Frame, from_=1, to=9999, increment=1, width=6)
+year_SpinBox.grid(row=0, column=1, sticky='nswe', padx=5, ipadx = 10)
 
-    def check_availability(self):
-        """Verifica la disponibilidad de una nueva reservación."""
-        name = self.name_entry.get()
-        date = self.date_entry.get()
-        time = self.time_entry.get()
+ttk.Label(date_Frame, text='/').grid(row=0, column=2, sticky='nswe')
+# Month SpinBox
+month_SpinBox = ttk.Spinbox(date_Frame, from_=1, to=12, increment=1, width=4)
+month_SpinBox.grid(row=0, column=3, sticky='nswe', padx=5, ipadx = 10)
 
-        if name and date and time:
-            if self.manager.verify_availability(name):
-                messagebox.showinfo("Disponibilidad", "La reservación está disponible.")
-            else:
-                messagebox.showwarning("No disponible", "La reservación ya existe.")
-        else:
-            messagebox.showwarning("Advertencia", "Complete los campos requeridos.")
+ttk.Label(date_Frame, text='/').grid(row=0, column=4, sticky='nswe')
+# Day SpinBox
+day_SpinBox = ttk.Spinbox(date_Frame, from_=1, to=31, increment=1, width=4)
+day_SpinBox.grid(row=0, column=5, sticky='nswe', padx=5, ipadx = 10)
 
-    def on_reservation_select(self, event):
-        """Carga los detalles de la reserva seleccionada en los cuadros de entrada."""
-        selection = self.reservation_listbox.curselection()
-        if selection:
-            self.selected_reservation = self.manager.reservations[selection[0]]
-            self.name_entry.delete(0, tk.END)
-            self.name_entry.insert(0, self.selected_reservation.name)
-            self.date_entry.delete(0, tk.END)
-            self.date_entry.insert(0, self.selected_reservation.date)
-            self.time_entry.delete(0, tk.END)
-            self.time_entry.insert(0, self.selected_reservation.time)
-            self.length_entry.delete(0, tk.END)
-            self.length_entry.insert(0, self.selected_reservation.length)
+# Nested Frame for Name Input
+name_Frame = ttk.Frame(Reservation_input_Frame)
+name_Frame.grid(row=1, column=0, sticky='ew', pady=5,)
 
-    def clear_entries(self):
-        """Limpia los cuadros de entrada."""
-        self.name_entry.delete(0, tk.END)
-        self.date_entry.delete(0, tk.END)
-        self.time_entry.delete(0, tk.END)
-        self.length_entry.delete(0, tk.END)
+Name_Label = ttk.Label(name_Frame, text='Name')
+Name_Label.grid(row=0, column=0, sticky='nswe', padx= 26)
 
-if __name__ == "__main__":
-    root = tk.Tk()
-    app = ReservationApp(root)
-    root.mainloop()
+Name_input = ttk.Entry(name_Frame, width=20)
+Name_input.grid(row=0, column=1, sticky='nswe', ipadx= 14)
+
+# Nested Frame for Time Selector
+time_Frame = ttk.Frame(Reservation_input_Frame)
+time_Frame.grid(row=2, column=0, sticky='ew', pady=5)
+
+time_Label = ttk.Label(time_Frame, text='Time')
+time_Label.grid(row=0, column=0, sticky='nswe', padx= 25)
+
+# Hours SpinBox
+hours_SpinBox1 = ttk.Spinbox(time_Frame, from_=1, to=24, increment=1, width=4)
+hours_SpinBox1.grid(row=0, column=1, sticky='nswe', padx=10, ipadx = 10)
+
+ttk.Label(time_Frame, text=':').grid(row=0, column=2, sticky='nswe')
+
+# Minutes SpinBox
+min_SpinBox1 = ttk.Spinbox(time_Frame, from_=0, to=59, increment=1, width=4)
+min_SpinBox1.grid(row=0, column=3, sticky='nswe', padx=10, ipadx = 10)
+
+# Nested Frame for Length Selector
+length_Frame = ttk.Frame(Reservation_input_Frame)
+length_Frame.grid(row=3, column=0, sticky='ew', pady=5)
+
+Lenght_Label = ttk.Label(length_Frame, text='Length')
+Lenght_Label.grid(row=0, column=0, sticky='nswe', padx= 20)
+
+# Hours SpinBox
+hours_SpinBox2 = ttk.Spinbox(length_Frame, from_=1, to=24, increment=1, width=4)
+hours_SpinBox2.grid(row=0, column=1, sticky='nswe', padx=10, ipadx = 10)
+
+ttk.Label(length_Frame, text=':').grid(row=0, column=2, sticky='nswe')
+
+# Minutes SpinBox
+min_SpinBox2 = ttk.Spinbox(length_Frame, from_=0, to=59, increment=1, width=4)
+min_SpinBox2.grid(row=0, column=3, sticky='nswe', padx=10, ipadx = 10)
+
+# Submit Button
+submit_button = ttk.Button(Reservation_input_Frame, text="Submit")
+submit_button.grid(row=4, column=0, pady=10, ipadx = 50, ipady = 10)
+
+#Right Side 
+
+right_Side_frame : tk = ttk.Frame(window)
+right_Side_frame.grid(row=0, column=1, sticky='nsew')
+
+#Reservour Table
+
+#GUI
+Reservour_Table : tk = ttk.Treeview(right_Side_frame, columns=('Name', 'Date', 'Time', 'Length'), show='headings')
+Reservour_Table.heading('Name', text='Name')
+Reservour_Table.heading('Date', text='Date')
+Reservour_Table.heading('Time', text='Time')
+Reservour_Table.heading('Length', text='Length')
+Reservour_Table.pack(fill='both',expand = True, padx = 30, pady = 30)
+
+#Logic
+
+all_Reservations: List[Reservation] = Manager.show_all_reservations()
+
+for reservation in all_Reservations:
+    Name: str = reservation.name
+    Date: str = reservation.date
+    Time: str = reservation.time
+    Length: str = str(reservation.length)
+    Data = (Name, Date, Time, Length)
+    Reservour_Table.insert(parent='', index='end', values=Data)
+
+#Events
+def item_Selected(_) -> None :
+    for items in Reservour_Table.selection():
+        print(Reservour_Table.item(items)['values'])
+
+Reservour_Table.bind('<<TreeviewSelect>>', item_Selected)
+
+#Buttons Grid
+
+buttons_Frame : tk = ttk.Frame (right_Side_frame)
+buttons_Frame.pack(side = 'bottom')
+buttons_Frame.rowconfigure(0, weight=1)
+buttons_Frame.columnconfigure(0, weight=1)
+buttons_Frame.columnconfigure(1, weight=1)
+
+#Remove Button
+remove_Button : tk = ttk.Button(buttons_Frame, text= 'Remove')
+remove_Button.grid(row = 0, column = 0, padx = 30, pady = 20, sticky = 'we', ipadx = 50, ipady = 10)
+
+#Update Button
+update_Button : tk = ttk.Button(buttons_Frame, text= 'Update')
+update_Button.grid(row = 0, column = 1, padx = 30, pady = 20, sticky = 'we', ipadx = 50, ipady = 10)
+
+#Main Run Loop
+window.mainloop()
