@@ -1,0 +1,95 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap');
+
+body{
+    margin: 0;
+    border: 0;
+    padding: 0;
+    font-family: "Roboto", Arial, Helvetica, sans-serif;
+    background-color: #fefeff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+.login_div{
+    height: 55vh;
+    width: 100vw;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    border-top-left-radius: 10vh;
+    border-top-right-radius: 10vh;
+    background-color: #f5f5f4;
+}
+
+.Welcome_text{
+    font-size: 4rem;
+}
+
+.Login_text{
+    font-size: 1.5rem;
+    margin-top: -4vh;
+}
+
+.main_texts{
+    display:  flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+}
+
+.image_div{
+    height: 45vh;
+}
+
+.Login_by_ID_div{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.Volunteer_ID_text{
+    font-size: 2rem;
+}
+
+.input_ID{
+    border-top: none;
+    border-left: none;
+    border-right: none;
+    background-color: #f5f5f4;
+    width: 50vw;
+    padding-left: 1.5rem;
+    height: 3rem;
+    font-size: 1.5rem;
+}
+
+.register_button{
+    background-color: #99d0d2;
+    border: none;
+    margin-top: 3rem;
+    height: 4rem;
+    width: 10rem;
+    border-radius: 1rem;
+    font-size: 2rem;
+}
+
+.register_button:hover{
+    opacity: 0.8;
+}
+
+.register_button:active{
+    opacity: 0.4;
+}
+
+.Logo_img{
+    position: absolute;
+    top: 1rem;
+    left: 1rem;
+    height: 8rem;
+}
+
+.Guards_img{
+    margin-top: 2rem;
+}

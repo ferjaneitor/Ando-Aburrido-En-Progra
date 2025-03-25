@@ -9,118 +9,148 @@ Explicaciones echas con ChatGPT con el objetivo de crear documentacion mas que n
 
 ---------------------------------------------------------------------------------------------------------------------------------------------
 
-La clase Reservation se encarga de representar una reserva, incluyendo la validación de los datos y el cálculo de la hora de finalización. Aquí te explico cómo usarla paso a paso:
+# Sistema de Gestión de Reservas
 
-1. Inicialización
-Para crear una nueva reserva, debes instanciar la clase Reservation con los parámetros necesarios: nombre, fecha, hora y duración.
+Este sistema permite gestionar reservas mediante las clases `Manager` y `Reservation`. A continuación, se describen las funciones disponibles y ejemplos de uso.
 
-    from .Reservation import Reservation  # Asegúrate de importar la clase
+## Clases
 
-    reserva = Reservation(name="Juan", date="2024-12-01", time="18:00", length="2")
+### Manager
 
-2. Validación de Fecha
-Puedes validar la fecha utilizando el método validate_date, aunque al establecer la fecha en el constructor, se valida automáticamente.
+La clase `Manager` se encarga de gestionar las reservas, incluyendo la carga y el almacenamiento de datos en un archivo JSON.
 
-    try:
-        fecha_valida = reserva.validate_date("2024-12-01")  # Esto no generará error
-    except ValueError as e:
-        print(e)
+#### Métodos
 
-3. Validación de Hora
-De igual forma, puedes validar la hora usando el método validate_time.
+- **`__init__(self, filename: str = 'reservations.json') -> None`**
+  - Inicializa el Manager y carga las reservas desde el archivo JSON.
+  - **Parámetro:**
+    - `filename`: Nombre del archivo JSON (por defecto es 'reservations.json').
 
-    try:
-        hora_valida = reserva.validate_time("18:00")  # Esto no generará error
-    except ValueError as e:
-        print(e)
+- **`_load_reservations(self) -> List[Reservation]`**
+  - Carga las reservas desde el archivo JSON y las convierte en objetos `Reservation`.
 
-4. Validación de Duración
-Puedes validar la duración de la reserva usando el método validate_length.
+- **`_save_reservations(self) -> None`**
+  - Guarda la lista de reservas actuales en el archivo JSON.
 
-    try:
-        duracion_valida = reserva.validate_length("2")  # Esto no generará error
-    except ValueError as e:
-        print(e)
+- **`add_reservation(self, name: str, date: str, time: str, length_hours: int, length_minutes: int) -> None`**
+  - Agrega una nueva reserva a la lista.
+  - **Parámetros:**
+    - `name`: Nombre de la persona que hace la reserva.
+    - `date`: Fecha de la reserva en formato `YYYY-MM-DD`.
+    - `time`: Hora de la reserva en formato `HH:MM`.
+    - `length_hours`: Duración de la reserva en horas.
+    - `length_minutes`: Duración de la reserva en minutos.
+  - **Ejemplo:**
+    ```python
+    manager.add_reservation("Juan Pérez", "2024-10-31", "14:00", 2, 30)
+    ```
 
-5. Obtener Hora de Finalización
-Una vez que la reserva está creada, puedes calcular la hora de finalización utilizando el método end_time.
+- **`remove_reservation(self, reservation_name: str) -> None`**
+  - Elimina una reserva por su nombre.
+  - **Parámetro:**
+    - `reservation_name`: Nombre de la reserva a eliminar.
+  - **Ejemplo:**
+    ```python
+    manager.remove_reservation("Juan Pérez")
+    ```
 
-    hora_finalizacion = reserva.end_time()
-    print(f"La reservación finaliza a las {hora_finalizacion}.")
+- **`update_reservation(self, reservation_name: str, updated_reservation: Reservation) -> None`**
+  - Actualiza una reserva existente.
+  - **Parámetros:**
+    - `reservation_name`: Nombre de la reserva que se va a actualizar.
+    - `updated_reservation`: Objeto `Reservation` con la información actualizada.
+  - **Ejemplo:**
+    ```python
+    updated_res = Reservation("Juan Pérez", "2024-10-31", "15:00", "2:00")
+    manager.update_reservation("Juan Pérez", updated_res)
+    ```
 
-6. Representación de la Reserva
-Si deseas ver una representación legible de la reserva, puedes usar el método __str__.
+- **`check_availability(self, reservation_date: str, reservation_time: str, length_hours: int, length_minutes: int, reservation_name: str = None) -> bool`**
+  - Verifica si hay disponibilidad para una nueva reserva.
+  - **Parámetros:**
+    - `reservation_date`: Fecha de la reserva.
+    - `reservation_time`: Hora de la reserva.
+    - `length_hours`: Duración en horas.
+    - `length_minutes`: Duración en minutos.
+    - `reservation_name`: Nombre de la reserva actual (opcional, para actualizaciones).
+  - **Ejemplo:**
+    ```python
+    available = manager.check_availability("2024-10-31", "14:00", 2, 30)
+    ```
 
-    print(reserva)  # Esto mostrará la descripción de la reservación
+- **`show_all_reservations(self) -> List[Reservation]`**
+  - Devuelve todas las reservas actuales.
 
-7. Modificar Propiedades
-Puedes modificar las propiedades de la reserva, y la validación se realizará automáticamente al utilizar los setters:
+- **`find_reservation_by_date(self, reservation_date: str) -> List[Reservation]`**
+  - Busca reservas por fecha.
+  - **Parámetro:**
+    - `reservation_date`: Fecha para buscar reservas.
+  - **Ejemplo:**
+    ```python
+    reservas = manager.find_reservation_by_date("2024-10-31")
+    ```
 
-    try:
-        reserva.date = "2024-12-02"  # Cambiar la fecha
-        reserva.time = "19:00"        # Cambiar la hora
-        reserva.length = "3"          # Cambiar la duración
-    except ValueError as e:
-        print(e)
+- **`find_reservation_by_time(self, reservation_time: str) -> List[Reservation]`**
+  - Busca reservas por hora.
+  - **Parámetro:**
+    - `reservation_time`: Hora para buscar reservas.
 
------------------------------------------------------------------------------------------------------------------------------------------------------
+- **`show_menu(self) -> List[str]`**
+  - Devuelve las opciones del menú como una lista de cadenas.
 
-Ejemplo de uso del Manager
+- **`display_reservations(self) -> None`**
+  - Muestra todas las reservas en un formato legible.
 
-La clase Manager se encarga de gestionar reservas, almacenándolas en un archivo JSON y proporcionando métodos para manipularlas. Aquí te explico cómo usarla paso a paso:
+---
 
-1. Inicialización
-Para utilizar la clase Manager, primero debes instanciarla. Puedes hacerlo pasando el nombre del archivo JSON donde se guardarán las reservas (por defecto es 'reservations.json'):
+### Clase Reservation
 
-    manager = Manager('reservations.json')
+La clase `Reservation` representa una reserva individual.
 
-2. Agregar Reservaciones
-Puedes agregar una nueva reservación creando un objeto de la clase Reservation y llamando al método add_reservation.
+#### Métodos y propiedades
 
-    from .Reservation import Reservation  # Asegúrate de importar la clase Reservation
+- **`__init__(self, name: str, date: str, time: str, length: str)`**
+  - Inicializa una nueva reserva.
+  - **Parámetros:**
+    - `name`: Nombre de la persona que realiza la reserva.
+    - `date`: Fecha de la reserva en formato `YYYY-MM-DD`.
+    - `time`: Hora de la reserva en formato `HH:MM`.
+    - `length`: Duración de la reserva en formato `'horas:minutos'`.
 
-    nueva_reserva = Reservation(name="Juan", date_time="2024-12-01 18:00")  # Cambia los parámetros según la definición de Reservation
-    manager.add_reservation(nueva_reserva)
+- **`validate_date(self, date: str) -> str`**
+  - Valida el formato de la fecha.
 
-3. Eliminar Reservaciones
-Si deseas eliminar una reserva por su nombre, utiliza el método remove_reservation.
+- **`validate_time(self, time: str) -> str`**
+  - Valida el formato de la hora.
 
-    manager.remove_reservation("Juan")
+- **`validate_length(self, length: str) -> float`**
+  - Valida y convierte la duración de la reserva a horas.
 
-4. Actualizar Reservaciones
-Para actualizar una reserva existente, primero debes crear un nuevo objeto Reservation con la información actualizada y luego llamar a update_reservation.
+- **Propiedades**:
+  - `date`, `time`, `length`, `name`: Aseguran que los datos sean válidos al ser establecidos.
 
-    reserva_actualizada = Reservation(name="Juan", date_time="2024-12-01 19:00")  # Cambia los parámetros según sea necesario
-    manager.update_reservation("Juan", reserva_actualizada)
+- **`end_time(self) -> str`**
+  - Calcula la hora de finalización de la reserva.
 
-5. Verificar Disponibilidad
-Puedes verificar si hay disponibilidad para una fecha y hora específicas usando check_availability.
+- **`to_dict(self) -> dict`**
+  - Convierte la reserva a un diccionario para almacenamiento.
 
-    disponible = manager.check_availability("2024-12-01", "18:00")
-    if disponible:
-        print("La fecha y hora están disponibles.")
-    else:
-        print("Ya existe una reserva en esa fecha y hora.")
+---
 
-6. Mostrar Todas las Reservaciones
-Para obtener una lista de todas las reservas actuales, usa el método show_all_reservations.
+## Ejemplo de Uso
 
-    reservas = manager.show_all_reservations()
-    for reserva in reservas:
-        print(reserva)
+```python
+from Manager import Manager
+from Reservation import Reservation
 
-7. Buscar Reservaciones
-Puedes buscar reservas por fecha o por hora utilizando find_reservation_by_date y find_reservation_by_time.
+# Crear un Manager
+manager = Manager()
 
-    reservas_fecha = manager.find_reservation_by_date("2024-12-01")
-    reservas_hora = manager.find_reservation_by_time("18:00")
+# Agregar una reserva
+manager.add_reservation("Juan Pérez", "2024-10-31", "14:00", 2, 30)
 
-    print("Reservas para el 2024-12-01:", reservas_fecha)
-    print("Reservas a las 18:00:", reservas_hora)
+# Mostrar todas las reservas
+manager.display_reservations()
 
-8. Mostrar Menú
-Si necesitas mostrar un menú con las opciones disponibles, puedes llamar a show_menu.
-
-    menu = manager.show_menu()
-    for opcion in menu:
-        print(opcion)
+# Buscar por fecha
+reservas = manager.find_reservation_by_date("2024-10-31")

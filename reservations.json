@@ -1,16 +1,23 @@
 [
     {
-        "name": "Cumplea\u00f1os",
-        "date": "2025-12-20",
-        "time": "18:20",
-        "length_hours": 6,
-        "length_minutes": 40
+        "name": "Cumple de la jota",
+        "date": "2025-01-09",
+        "time": "07:24",
+        "length_hours": 24,
+        "length_minutes": 24
     },
     {
-        "name": "Cumplea\u00f1os de keyla",
-        "date": "2026-01-18",
+        "name": "Cumlple del joto",
+        "date": "2025-02-04",
+        "time": "07:24",
+        "length_hours": 24,
+        "length_minutes": 24
+    },
+    {
+        "name": "Halloween",
+        "date": "2024-10-31",
         "time": "16:30",
-        "length_hours": 4,
-        "length_minutes": 20
+        "length_hours": 0,
+        "length_minutes": 2
     }
 ]
